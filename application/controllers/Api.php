@@ -34,5 +34,20 @@ class Api extends RestController {
         $user->save() ? $this->response( ['status' => RestController::HTTP_OK ,'message' => 'create ok', 'token' => 'GENERATE_TOKEN'], RestController::HTTP_OK ) : $this->response( ['status' => RestController::HTTP_UNAUTHORIZED ,'message' => 'create failed'], RestController::HTTP_UNAUTHORIZED );
 
     }
+    
+    public function receiver_post(){
+        $usr_id = $this->security->xss_clean($this->input->post('usr_id'));
+        $msg = $this->security->xss_clean($this->input->post('usr_msg'));
+        $this->load->model('Conversation_model', 'conversation', TRUE);
+        $response = $this->conversation->generateMessage($usr_id, $msg);
+
+        $this->response( [
+                            'status' => RestController::HTTP_OK ,
+                            'expression' => $response['expression'],
+                            'greeting' => $response['greeting'],
+                            'question' => $response['question'],
+                            'answer' => $response['answer'],
+                        ], RestController::HTTP_OK );
+    }
 
 }
