@@ -18,6 +18,7 @@ class Conversation_model extends CI_Model {
         $this->load->database();
         $this->load->model('Question_model');
         $this->load->model('Greeting_model');
+        $this->load->model('Expression_model');
         
     }
     
@@ -25,7 +26,32 @@ class Conversation_model extends CI_Model {
         $cnv = $this->get_cnv($usr_id);
 
         if($cnv->num_rows() == 1){
-            //CONVERSACION PREVIAMENTE INICIADA
+            $cnv = $cnv->row_object();
+            $last_msg = explode("_", $cnv->cnv_last_msg);
+
+            switch($last_msg[0]){
+                case 'question':
+                        $question = new Question_model();
+                        $question->findById($last_msg[1]);
+                        $expression = new Expression_model();
+                        $expression->findById($question->get('qst_exp_id'));
+                        $question->findById($expression->get('exp_qst_id'));
+
+                        $cnv = new Conversation_model();
+                        $cnv->set('cnv_usr_id', $usr_id);
+                        $cnv->set('cnv_last_msg', "question_".$question->get('qst_id'));
+                        $cnv->set('cnv_last_update', date('Y-m-d H:s:i'));
+                        $cnv->save();
+                        
+                        return [
+                            'expression' => str_replace("[replace]", $msg, $expression->get('exp_text') ),
+                            'greeting' => '',
+                            'question' => $question->get('qst_text'),
+                            'answer' => $question->findAnswers(),
+                        ];
+
+                    break;
+            }
         }else{
             $greeting = new Greeting_model();
             $greeting->set_grt(false);

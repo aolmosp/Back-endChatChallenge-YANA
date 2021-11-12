@@ -6,8 +6,7 @@ class Question_model extends CI_Model {
     private $collumns = array(
         'qst_id'        => 0,
         'qst_group_id'    => 0,
-        'qst_exp_id'      =>'',
-        'qst_ans_id'      =>'',
+        'qst_exp_id'      => 0,
         'qst_text'      =>'',
         );
 
@@ -17,7 +16,7 @@ class Question_model extends CI_Model {
         $this->load->database();
     }
 
-    function set_qst($random = true, $id, $group = null)
+    private function set_qst($random = true, $id, $group = null)
     {
         if($random){
 
@@ -31,7 +30,7 @@ class Question_model extends CI_Model {
 
     }
 
-    function setCollumns($data)
+    private function setCollumns($data)
     {
         foreach ($data as $key => $value) {
             $this->collumns[$key] = $value;
@@ -44,5 +43,24 @@ class Question_model extends CI_Model {
 		}
 		return  "";
 	}
+
+    public function findById($id)
+	{
+		$query = $this->db->get_where(self::$TABLE, array(self::$KEY => $id));
+		if($query->num_rows() == 1){
+            $this->setCollumns($query->row_object());
+		}
+	}
+
+    public function findAnswers(){
+        $query = $this->db->select('ans_id , ans_text')->from('answer')->where('ans_qst_id', $this->collumns[Self::$KEY])->get();
+        if($query->num_rows() > 0){
+            foreach ($query->result() as $key => $value) {
+                $answers[] = (array) $value;
+            }
+            return $answers;
+        }
+        return null;
+    }
 
 }

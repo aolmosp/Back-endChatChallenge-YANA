@@ -25,7 +25,6 @@ class Greeting_model extends CI_Model {
             $this->db->limit(1);
             $this->setCollumns($this->db->get()->row_object());            
         }
-
     }
 
     function setCollumns($data)
