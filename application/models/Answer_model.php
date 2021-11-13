@@ -37,4 +37,15 @@ class Answer_model extends CI_Model {
             $this->setCollumns($query->row_object());
 		}
 	}
+
+    public function backoffice()
+    {
+        $this->load->library('grocery_CRUD');
+        $crud = new grocery_CRUD();
+        $crud->set_table(self::$TABLE);
+        $crud->set_relation('ans_qst_id','question','qst_id');
+        $crud->set_relation('ans_exp_id','expression','exp_id');
+        $output = $crud->render();
+        return $output;
+    }
 }

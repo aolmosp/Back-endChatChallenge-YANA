@@ -2,7 +2,7 @@
 class Conversation_model extends CI_Model {
 	protected static  $TABLE = "conversation"; 
     protected static  $KEY   = "cnv_id";
-    protected static  $FOREING_KEY   = "cnv_usr_id"; 
+    protected static  $FOREIGN_KEY   = "cnv_usr_id"; 
 
     private $collumns = array(
         'cnv_id'          => 0,
@@ -45,6 +45,7 @@ class Conversation_model extends CI_Model {
                 $cnv->set('cnv_usr_id', $usr_id);
                 $cnv->set('cnv_last_msg', "question_".$question->get('qst_id'));
                 $cnv->set('cnv_last_update', date('Y-m-d H:i:s'));
+                $cnv->set('cnv_text' , "[BOT] ".$greeting->get('grt_text')." [BOT]".$question->get('qst_text') );
                 $cnv->save();
 
                 return [
@@ -68,6 +69,7 @@ class Conversation_model extends CI_Model {
                         $cnv->set('cnv_usr_id', $usr_id);
                         is_null($answer) ? $cnv->set('cnv_last_msg', "question_".$question->get('qst_id')) : $cnv->set('cnv_last_msg', "answer_".$question->get('qst_id'));
                         $cnv->set('cnv_last_update', date('Y-m-d H:i:s'));
+                        $cnv->set('cnv_text' , "[HUMANO] ".$msg." [BOT]".str_replace("[replace]", $msg, $expression->get('exp_text') ) );
                         $cnv->save();
                         
                         return [
@@ -80,8 +82,10 @@ class Conversation_model extends CI_Model {
                     break;
                 case 'answer':
 
+                    
                         $answer = new Answer_model();
                         $answer->findById($msg);
+                        $human_selected = $answer->get('ans_text');
                         $expression = new Expression_model();
                         $expression->findById($answer->get('ans_exp_id'));
                         $question = new Question_model();
@@ -92,6 +96,7 @@ class Conversation_model extends CI_Model {
                         $cnv->set('cnv_usr_id', $usr_id);
                         is_null($answer) ? $cnv->set('cnv_last_msg', "question_".$question->get('qst_id')) : $cnv->set('cnv_last_msg', "answer_".$question->get('qst_id'));
                         $cnv->set('cnv_last_update', date('Y-m-d H:i:s'));
+                        $cnv->set('cnv_text' , "[HUMANO] ".$human_selected." [BOT]".str_replace("[replace]", $msg, $expression->get('exp_text'))." [BOT]".$question->get('qst_text') );
                         $cnv->save();
 
                         return  [
@@ -113,6 +118,7 @@ class Conversation_model extends CI_Model {
             $cnv->set('cnv_usr_id', $usr_id);
             $cnv->set('cnv_last_msg', "question_".$question->get('qst_id'));
             $cnv->set('cnv_last_update', date('Y-m-d H:i:s'));
+            $cnv->set('cnv_text' , "[BOT] ".$greeting->get('grt_text')." [BOT]".$question->get('qst_text') );
             $cnv->save();
 
             return [
@@ -128,7 +134,7 @@ class Conversation_model extends CI_Model {
     function get_cnv($usr_id){
         $this->db->select('*');
         $this->db->from(Self::$TABLE);
-        $this->db->where(Self::$FOREING_KEY, $usr_id);
+        $this->db->where(Self::$FOREIGN_KEY, $usr_id);
         $this->db->order_by('cnv_last_update', 'desc');
         $this->db->limit(1);
         return $this->db->get();
