@@ -35,7 +35,7 @@ class Conversation_model extends CI_Model {
             $last_interaction = new DateTime($cnv->cnv_last_update);
 
             //REINICIA LA CONVERSACIÓN AL SOBREPASAR LOS 2 MINUTOS DESDE LA ÚLTIMA INTERACCIÓN
-            if($now->diff($last_interaction)->format('%i') >= 1){
+            if($now->diff($last_interaction)->format('%i') >= 2){
                 $greeting = new Greeting_model();
                 $greeting->set_grt(2);
                 $question = new Question_model();
