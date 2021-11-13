@@ -37,4 +37,14 @@ class Greeting_model extends CI_Model {
 		}
 		return  "";
 	}
+
+    public function backoffice()
+    {
+        $this->load->library('grocery_CRUD');
+        $crud = new grocery_CRUD();
+        $crud->set_table(self::$TABLE);
+        $crud->set_relation('grt_qst_id','question','qst_id');
+        $output = $crud->render();
+        return $output;
+    }
 }

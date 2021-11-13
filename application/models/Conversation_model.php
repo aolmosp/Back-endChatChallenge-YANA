@@ -35,7 +35,7 @@ class Conversation_model extends CI_Model {
             $last_interaction = new DateTime($cnv->cnv_last_update);
 
             //REINICIA LA CONVERSACIÓN AL SOBREPASAR LOS 2 MINUTOS DESDE LA ÚLTIMA INTERACCIÓN
-            if($now->diff($last_interaction)->format('%i') >= 2){
+            if($now->diff($last_interaction)->format('%i') >= 1){
                 $greeting = new Greeting_model();
                 $greeting->set_grt(2);
                 $question = new Question_model();
@@ -69,7 +69,7 @@ class Conversation_model extends CI_Model {
                         $cnv->set('cnv_usr_id', $usr_id);
                         is_null($answer) ? $cnv->set('cnv_last_msg', "question_".$question->get('qst_id')) : $cnv->set('cnv_last_msg', "answer_".$question->get('qst_id'));
                         $cnv->set('cnv_last_update', date('Y-m-d H:i:s'));
-                        $cnv->set('cnv_text' , "[HUMANO] ".$msg." [BOT]".str_replace("[replace]", $msg, $expression->get('exp_text') ) );
+                        $cnv->set('cnv_text' , "[HUMANO] ".$msg." [BOT]".str_replace("[replace]", $msg, $expression->get('exp_text') )." [BOT]".$question->get('qst_text') );
                         $cnv->save();
                         
                         return [
