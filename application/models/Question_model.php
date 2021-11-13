@@ -5,7 +5,7 @@ class Question_model extends CI_Model {
     
     private $collumns = array(
         'qst_id'        => 0,
-        'qst_group_id'    => 0,
+        'qst_group'    => 0,
         'qst_exp_id'      => 0,
         'qst_text'      =>'',
         );
@@ -16,18 +16,13 @@ class Question_model extends CI_Model {
         $this->load->database();
     }
 
-    private function set_qst($random = true, $id, $group = null)
+    public function set_qst($id, $group = null)
     {
-        if($random){
-
-        }else{
-            $this->db->select('*');
-            $this->db->from(Self::$TABLE);
-            $this->db->where(Self::$KEY, $id);
-            $this->db->limit(1);
-            $this->setCollumns($this->db->get()->row_object());            
-        }
-
+        $this->db->select('*');
+        $this->db->from(Self::$TABLE);
+        $this->db->where(Self::$KEY, $id);
+        $this->db->limit(1);
+        $this->setCollumns($this->db->get()->row_object());
     }
 
     private function setCollumns($data)

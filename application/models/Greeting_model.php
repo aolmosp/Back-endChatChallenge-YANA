@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Greeting_model extends CI_Model {
 	protected static  $TABLE = "greeting"; 
-    protected static  $KEY   = "cnv_id";
+    protected static  $KEY   = "grt_id";
 
     private $collumns = array(
         'grt_id'        => 0,
@@ -15,16 +15,13 @@ class Greeting_model extends CI_Model {
         $this->load->database();
     }
 
-    function set_grt($random = true)
+    function set_grt($id)
     {
-        if($random){
-
-        }else{
-            $this->db->select('*');
-            $this->db->from(Self::$TABLE);
-            $this->db->limit(1);
-            $this->setCollumns($this->db->get()->row_object());            
-        }
+        $this->db->select('*');
+        $this->db->from(Self::$TABLE);
+        $this->db->where(Self::$KEY, $id);
+        $this->db->limit(1);
+        $this->setCollumns($this->db->get()->row_object());               
     }
 
     function setCollumns($data)

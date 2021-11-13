@@ -6,6 +6,7 @@ class Answer_model extends CI_Model {
     private $collumns = array(
         'ans_id'        => 0,
         'ans_qst_id'    => 0,
+        'ans_exp_id'    => 0,
         'ans_text'      =>'',
         );
 
@@ -29,5 +30,11 @@ class Answer_model extends CI_Model {
 		return  "";
 	}
 
-
+    public function findById($id)
+	{
+		$query = $this->db->get_where(self::$TABLE, array(self::$KEY => $id));
+		if($query->num_rows() == 1){
+            $this->setCollumns($query->row_object());
+		}
+	}
 }
